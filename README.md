@@ -5,6 +5,6 @@ An angular directive that takes in a "form object" and spits out a fully validat
 
 TODO:
 
--Radio buttons
--Functions on inputs (confirm password)
--Sanitize input
+*Radio buttons
+*Functions on inputs (confirm password)
+*Sanitize input
