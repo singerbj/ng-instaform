@@ -17,7 +17,12 @@ var json = {
 			"maxlength": "30",
 			"minlength": "5",
 			"required": "true",			
-		},
+		}, 
+		{
+			"attribute":"still_alive",
+			"type":"checkbox",			
+			"required":"true"
+    }, 
 		{
 			"attribute":"description",
 			"type":"text",			
@@ -31,17 +36,18 @@ var json = {
 			"maxlength":"10", 
 			"minlength":"3",
 			"required":"false",
-        },   
-		{
-			"attribute":"still_alive",
-			"type":"checkbox",			
+    },   
+    {
+			"attribute":"which_option",
+			"type":"radio",
+			"options":["Option 1","Option 2","Option 3"],
 			"required":"true"
-        },    
+    },   
 		{
 			"attribute":"date_of_birth",
 			"type":"date",			
 			"required":"true"
-        }   
+    }   
 		
 	]
 };
@@ -95,6 +101,7 @@ app.directive('ngInstaform', function($compile) {
             var createLabel = function(inputParams){	
                 var label = document.createElement("label");
                 label.setAttribute("for", this.instaformObj.model + "form" + inputParams.attribute);
+                label.setAttribute("style", "font-size: 14px;");
                 label.innerText = capString(inputParams.attribute);
                 return label;
             }
@@ -114,6 +121,37 @@ app.directive('ngInstaform', function($compile) {
                         input.setAttribute("ng-changed", inputParams.changed);
                     }		 
                 
+                }else if(inputParams.type === 'radio'){
+                  
+                  var input = document.createElement('div');
+                  input.setAttribute("class", this.instaformObj.model + "form" + inputParams.attribute);
+                  
+                  console.log('here');
+                  for(var i = 0; i < inputParams.options.length; i++){
+
+                    console.log('here2');
+
+                    var temp = document.createElement('input');
+                    temp.setAttribute("type", inputParams.type);
+                    temp.setAttribute("style", "margin-bottom: 10px;");
+                    temp.setAttribute("value", inputParams.options[i]);
+                    temp.setAttribute("ng-model", this.instaformObj.model + "." + inputParams.attribute);
+                  
+                    if(inputParams.changed){
+                        temp.setAttribute("ng-changed", inputParams.changed);
+                    }
+
+                    var tempSpan = document.createElement('span');
+                    tempSpan.innerHTML = "&nbsp;" + capString(inputParams.options[i]);
+
+
+                    var br = document.createElement('br');
+
+                    input.appendChild(temp);
+                    input.appendChild(tempSpan);
+                    input.appendChild(br);
+                  }
+
                 }else{
                     input = document.createElement("input");
                     input.setAttribute("type", inputParams.type);
@@ -228,8 +266,35 @@ app.directive('ngInstaform', function($compile) {
             
             if(this.instaformObj.inputs){
                 for(inputData in this.instaformObj.inputs){		
-                
-                    if(this.instaformObj.inputs[inputData].type !== 'checkbox'){
+                    if(this.instaformObj.inputs[inputData].type === 'checkbox'){
+                        var div = createDiv(this.instaformObj.inputs[inputData]);
+                        var label = createLabel(this.instaformObj.inputs[inputData]);
+                        var input = createInput(this.instaformObj.inputs[inputData]);
+
+                        var table = document.createElement('table');
+                        var tr = document.createElement('tr');
+                        var td = document.createElement('td');
+                        var td2 = document.createElement('td');
+                        var spacer = document.createElement('td');
+
+                        td.appendChild(label);
+                        td2.appendChild(input);
+                        tr.appendChild(td);
+                        tr.appendChild(spacer);
+                        spacer.innerHTML = "&nbsp;"
+                        tr.appendChild(td2);
+                        table.appendChild(tr);
+                        
+                        div.appendChild(table);
+                        form.appendChild(div);
+                    }else if(this.instaformObj.inputs[inputData].type === 'radio'){
+                        var div = createDiv(this.instaformObj.inputs[inputData]);
+                        var label = createLabel(this.instaformObj.inputs[inputData]);
+                        var input = createInput(this.instaformObj.inputs[inputData]);
+                        div.appendChild(label);
+                        div.appendChild(input);
+                        form.appendChild(div);
+                    }else{                 
                         //create the div, label, input, and error span elements
                         var div = createDiv(this.instaformObj.inputs[inputData]);
                         var label = createLabel(this.instaformObj.inputs[inputData]);
@@ -251,32 +316,7 @@ app.directive('ngInstaform', function($compile) {
                         
                         //append div to form
                         form.appendChild(div);
-                        form.appendChild(br2);
-                    }else{
-                        var label = createLabel(this.instaformObj.inputs[inputData]);
-                        var input = createInput(this.instaformObj.inputs[inputData]);
-
-                        var table = document.createElement('table');
-                        var tr = document.createElement('tr');
-                        var td = document.createElement('td');
-                        var td2 = document.createElement('td');
-                        var spacer = document.createElement('td');
-
-                        td.appendChild(label);
-                        td2.appendChild(input);
-                        tr.appendChild(td);
-                        tr.appendChild(spacer);
-                        spacer.innerHTML = "&nbsp;"
-                        tr.appendChild(td2);
-                        table.appendChild(tr);
-                        
-                        form.appendChild(table);
-
-                        var br = document.createElement("br");
-                        var br2 = document.createElement("br2");
-                        form.appendChild(br);
-                        form.appendChild(br2);
-
+                        form.appendChild(br2); 
                     }
                     
                 }
