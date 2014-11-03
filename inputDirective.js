@@ -1,58 +1,5 @@
 var app = angular.module('directives', []);
 
-var json = {
-	"model":"user",	
-	"enterKey": "true",
-	"inputs": [
-		{
-			"attribute":"name",
-			"type":"text",			
-			"maxlength":"10", 
-			"minlength":"5",
-			"required":"true",
-		},
-		{
-			"attribute":"email",
-			"type":"email",			
-			"maxlength": "30",
-			"minlength": "5",
-			"required": "true",			
-		}, 
-		{
-			"attribute":"still_alive",
-			"type":"checkbox",			
-			"required":"true"
-    }, 
-		{
-			"attribute":"description",
-			"type":"text",			
-			"maxlength":"10", 
-			"minlength":"0",
-			"required":"false",
-		}, 
-		{
-			"attribute":"password",
-			"type":"password",			
-			"maxlength":"10", 
-			"minlength":"3",
-			"required":"false",
-    },   
-    {
-			"attribute":"which_option",
-			"type":"radio",
-			"options":["Option 1","Option 2","Option 3"],
-			"required":"true"
-    },   
-		{
-			"attribute":"date_of_birth",
-			"type":"date",			
-			"required":"true"
-    }   
-		
-	]
-};
-
-
 app.directive('ngInstaform', function($compile) {
      
     var capString = function(string){
@@ -64,12 +11,13 @@ app.directive('ngInstaform', function($compile) {
     }
 
     return {
+        scope: {
+            obj: '=obj'
+        },
         restrict: 'E',
         link: function(scope, element, attrs) {
-            console.log(scope, element)
-
-            //this.instaformObj = attrs.obj;	
-            this.instaformObj = json;	
+            //load in form object from the obj attribute of the instaform element
+            this.instaformObj = scope.obj;	
             
             //methods
             var createform = function(){	
@@ -126,10 +74,8 @@ app.directive('ngInstaform', function($compile) {
                   var input = document.createElement('div');
                   input.setAttribute("class", this.instaformObj.model + "form" + inputParams.attribute);
                   
-                  console.log('here');
                   for(var i = 0; i < inputParams.options.length; i++){
 
-                    console.log('here2');
 
                     var temp = document.createElement('input');
                     temp.setAttribute("type", inputParams.type);
@@ -287,6 +233,8 @@ app.directive('ngInstaform', function($compile) {
                         
                         div.appendChild(table);
                         form.appendChild(div);
+                        //var br = document.createElement("br");
+                        //form.appendChild(br);
                     }else if(this.instaformObj.inputs[inputData].type === 'radio'){
                         var div = createDiv(this.instaformObj.inputs[inputData]);
                         var label = createLabel(this.instaformObj.inputs[inputData]);
@@ -340,46 +288,6 @@ app.directive('ngInstaform', function($compile) {
     }
 	
 });
-/*
-{
-	"model":"user",	
-	"enterKey": "true",
-	"inputs": [
-		{
-			"attribute":"name",
-			"type":"text",			
-			"maxlength":"10", 
-			"minlength":"5",
-			"required":"true",
-			"validate":"",
-			"change":""
-		},
-		{
-			"attribute":"email",
-			"type":"text",			
-			"maxlength": "30",
-			"minlength": "5",
-			"required": "true",
-			"validate": "function validateEmail(email) { 
-							var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-							return re.test(email);
-						}",
-			"change":""
-		},
-		{
-			"attribute":"description",
-			"type":"text",			
-			"maxlength":"10", 
-			"minlength":"0",
-			"required":"false",
-			"validate":"",
-			"change":"function(){ console.log("description changed!"); }"
-		},
-		
-	]
-}
-
-*/
 
 
 
