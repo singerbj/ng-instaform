@@ -4,9 +4,10 @@ ng-instaform
 An angular directive that takes in a "form object" and spits out a fully validated functional form.
 
 <b>TODO:</b><br>
-Inject object<br>
-Modularize<br>
+~~Inject object~~<br>
+~~Modularize~~<br>
 ~~Radio buttons~~<br>
+Select Inputs<br>
 Functions on inputs (confirm password)<br>
 Sanitize input<br>
 Test<br>

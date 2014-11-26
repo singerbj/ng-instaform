@@ -17,7 +17,10 @@ app.directive('ngInstaform', function($compile) {
         restrict: 'E',
         link: function(scope, element, attrs) {
             //load in form object from the obj attribute of the instaform element
-            this.instaformObj = scope.obj;	
+            this.instaformObj = scope.obj;
+
+            //declare validations
+            this.validations = ['max', 'min','maxlength','minlength','required','pattern','type'];
             
             //methods
             var createform = function(){	
@@ -107,27 +110,12 @@ app.directive('ngInstaform', function($compile) {
                     input.setAttribute("placeholder", capString(inputParams.attribute));
                     input.setAttribute("ng-model", this.instaformObj.model + "." + inputParams.attribute);
                         
-                    if(inputParams.max){
-                        input.setAttribute("ng-max", inputParams.max);
+
+                    for(var i = 0; i < validations.length; i++){
+                        if(inputParams[validations[i]]){
+                          input.setAttribute("ng-" + validations[i], inputParams[validations[i]]);
+                        } 
                     }
-                    if(inputParams.min){
-                        input.setAttribute("ng-min", inputParams.min);
-                    }
-                    if(inputParams.maxlength){
-                        input.setAttribute("ng-maxlength", inputParams.maxlength);
-                    }
-                    if(inputParams.minlength){
-                        input.setAttribute("ng-minlength", inputParams.minlength);
-                    }
-                    if(inputParams.required){
-                        input.setAttribute("ng-required", inputParams.required);
-                    }
-                    if(inputParams.pattern){
-                        input.setAttribute("ng-pattern", inputParams.pattern);
-                    }
-                    if(inputParams.changed){
-                        input.setAttribute("ng-changed", inputParams.changed);
-                    }		
                 }		
                         
                 return input;
@@ -137,64 +125,19 @@ app.directive('ngInstaform', function($compile) {
                 
                 var spanArray = [];
                 
-                if(inputParams.max){
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "help-inline text-danger");
-                    span.setAttribute("ng-show", this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute
-                        + ".$error.max && " + this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute + ".$dirty");
-                    span.innerText = "The " + inputParams.attribute + " is too high.";
-                    spanArray.push(span);
-                        
+                var messages = ['is too high', 'is too low','is too long','is too short','is required','is invalid','is invalid'];
+
+                for(var i = 0; i < validations.length; i++){ 
+                    if(inputParams[validations[i]]){
+                        var span = document.createElement("span");
+                        span.setAttribute("class", "help-inline text-danger");
+                        span.setAttribute("ng-show", this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute
+                            + ".$error." + validations[i] + " && " + this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute + ".$dirty");
+                        span.innerText = "The " + inputParams.attribute + " " + messages[i] + ".";
+                        spanArray.push(span);
+                            
+                    } 
                 }
-                if(inputParams.min){	
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "help-inline text-danger");
-                    span.setAttribute("ng-show", this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute
-                        + ".$error.min && " + this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute + ".$dirty");
-                    span.innerText = "The " + inputParams.attribute + " is too low.";
-                    spanArray.push(span);
-                }
-                if(inputParams.maxlength){
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "help-inline text-danger");
-                    span.setAttribute("ng-show", this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute
-                        + ".$error.maxlength && " + this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute + ".$dirty");
-                    span.innerText = "The " + inputParams.attribute + " is too long.";
-                    spanArray.push(span);
-                }
-                if(inputParams.minlength){
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "help-inline text-danger");
-                    span.setAttribute("ng-show", this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute
-                        + ".$error.minlength && " + this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute + ".$dirty");
-                    span.innerText = "The " + inputParams.attribute + " is too short.";
-                    spanArray.push(span);
-                }
-                if(inputParams.required){	
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "help-inline text-danger");
-                    span.setAttribute("ng-show", this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute
-                        + ".$error.required && " + this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute + ".$dirty");
-                    span.innerText = "The " + inputParams.attribute + " is required.";
-                    spanArray.push(span);
-                }
-                if(inputParams.pattern){	
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "help-inline text-danger");
-                    span.setAttribute("ng-show", this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute
-                        + ".$error.pattern && " + this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute + ".$dirty");
-                    span.innerText = "The " + inputParams.attribute + " is invalid.";
-                    spanArray.push(span);
-                } 
-                if(inputParams.type === 'email'){	
-                    var span = document.createElement("span");
-                    span.setAttribute("class", "help-inline text-danger");
-                    span.setAttribute("ng-show", this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute
-                        + ".$error.email && " + this.instaformObj.model + "form." + this.instaformObj.model + "form" + inputParams.attribute + ".$dirty");
-                    span.innerText = "The " + inputParams.attribute + " is invalid.";
-                    spanArray.push(span);
-                }   	
-                
                 return spanArray;
             }
             
