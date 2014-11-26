@@ -12,12 +12,16 @@ app.directive('ngInstaform', function($compile) {
 
     return {
         scope: {
-            obj: '=obj'
+            obj: '=obj',
+            submit: '=submit'
         },
         restrict: 'E',
         link: function(scope, element, attrs) {
             //load in form object from the obj attribute of the instaform element
             this.instaformObj = scope.obj;
+
+            this.submit = scope.submit;
+            console.log(scope);
 
             //declare validations
             this.validations = ['max', 'min','maxlength','minlength','required','pattern','type'];
@@ -30,8 +34,8 @@ app.directive('ngInstaform', function($compile) {
                     form.setAttribute("id", this.instaformObj.model + "form");
                     form.setAttribute("name", this.instaformObj.model + "form");
                     form.setAttribute("class", this.instaformObj.model + "form");
-                    if(this.instaformObj.enterKey && this.instaformObj.enterKey === true){
-                        form.setAttribute("ng-enter", "!" + this.instaformObj.model + "form.$invalid ? " + this.instaformObj.model + "formsubmit() : false");
+                    if(this.instaformObj.enterKey === true){
+                        form.setAttribute("ng-enter", "!" + this.instaformObj.model + "form.$invalid ? submit() : false");
                     }
                     form.setAttribute("novalidate", "");
                 }else{
@@ -145,7 +149,7 @@ app.directive('ngInstaform', function($compile) {
                 var a = document.createElement("a");
                 a.setAttribute("class", "btn btn-default");
                 a.setAttribute("ng-disabled", this.instaformObj.model + "form.$invalid");
-                a.setAttribute("ng-click", this.instaformObj.model + "formsubmit()");
+                a.setAttribute("ng-click", "submit()");
                 a.innerText = "Submit";
                 return a;
             }

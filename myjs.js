@@ -2,9 +2,13 @@ var myApp = angular.module('myApp',['directives']);
 
 myApp.controller('Controller', ['$scope', function($scope) {
     
+    $scope.userformsubmit = function(){
+        alert('User form submitted!');
+    };
+
     $scope.userForm = {
       "model":"user",	
-      "enterKey": "true",
+      "enterKey": true,
       "inputs": [
         {
           "attribute":"name",
@@ -64,8 +68,19 @@ myApp.controller('Controller', ['$scope', function($scope) {
       ]
     }; 
 
-    $scope.userformsubmit = function(){
-        console.log('User form submitted!');
-    }
 
 }]);
+
+myApp.directive('ngEnter', function() {
+    return function(scope, element, attrs) {
+        element.bind("keydown keypress", function(event) {
+            if(event.which === 13) {
+                scope.$apply(function(){
+                        scope.$eval(attrs.ngEnter);
+                });
+                
+                event.preventDefault();
+            }
+        });
+    };
+});
